@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKI&Sun - Aktualności</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0b1220;
+            color: #e5e7eb;
+            margin: 0;
+            padding: 24px;
+        }
+        .card {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #0f1b33;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 18px 18px 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+        .line {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 10px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.03);
+            margin: 10px 0;
+        }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            margin-top: 4px;
+        }
+        .msg {
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.15);
+            margin: 10px 0;
+        }
+        .adminBtn {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            color: #93c5fd;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        #admin-panel {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #1c2a48;
+        }
+        #admin-panel input, #admin-panel textarea, #admin-panel select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background-color: #333;
+            color: #e5e7eb;
+            border: 1px solid #555;
+        }
+        #admin-panel button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        #admin-panel button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>SKI&Sun - Aktualne informacje:</h1>
+
+        <div id="objects-container"></div>
+
+        <div class="sep"></div>
+        <h2>Aktualne komunikaty:</h2>
+        <div id="messages-container"></div>
+
+        <div class="sep"></div>
+        <a href="javascript:void(0)" onclick="toggleAdminPanel()" class="adminBtn">Panel Administratora</a>
+
+        <div id="admin-panel">
+            <h3>Dodaj obiekt:</h3>
+            <form id="add-object-form">
+                <input type="text" id="object-name" placeholder="Nazwa obiektu" required>
+                <input type="text" id="object-hours" placeholder="Godziny otwarcia" required>
+                <textarea id="object-info" placeholder="Informacje dodatkowe"></textarea>
+                <label>Status: </label>
+                <select id="object-status">
+                    <option value="true">OTWARTE</option>
+                    <option value="false">ZAMKNIĘTE</option>
+                </select>
+                <button type="submit">Dodaj Obiekt</button>
+            </form>
+
+            <h3>Dodaj komunikat:</h3>
+            <form id="add-message-form">
+                <textarea id="message-text" placeholder="Treść komunikatu" required></textarea>
+                <button type="submit">Dodaj Komunikat</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const objects = [
+            { name: "Kolej gondolowa", open: true, hours: "09:00-16:00 oraz nocne 18:00-21:00", info: "" },
+            { name: "Nartostrada", open: true, hours: "09:00-16:00 oraz nocne 18:00-21:00", info: "" },
+            { name: "Orczyk", open: true, hours: "09:00-16:00 oraz 18:00-21:00", info: "" }
+        ];
+
+        const messages = [
+            { ts: "16.01.2026 12:00", text: "Pogoda sprzyja! Zapraszamy na stoki.", isNew: true },
+            { ts: "15.01.2026 09:00", text: "Zmienione godziny otwarcia stoku. Sprawdź przed wyjazdem.", isNew: false }
+        ];
+
+        function displayObjects() {
+            const container = document.getElementById("objects-container");
+            container.innerHTML = ''; // Wyczyść zawartość przed dodaniem nowych obiektów
+
+            objects.forEach(obj => {
+                const div = document.createElement("div");
+                div.classList.add("line");
+                const status = obj.open ? "czynna" : "zamknięta";
+                div.innerHTML = `
+                    <div class="dot" style="background:${obj.open ? '#16a34a' : '#dc2626'};"></div>
+                    <div class="txt">
+                        <div class="name">${obj.name} <span class="st">(${status})</span></div>
+                        <div class="hours">${obj.hours}</div>
+                        <div class="info">${obj.info}</div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function displayMessages() {
+            const container = document.getElementById("messages-container");
+            container.innerHTML = ''; // Wyczyść zawartość przed dodaniem nowych wiadomości
+
+            messages.forEach(msg => {
+                const div = document.createElement("div");
+                div.classList.add("msg");
+                div.classList.add(msg.isNew ? "new" : "old");
+                div.innerHTML = `
+                    <div class="ts">${msg.ts}</div>
+                    <div class="txt">${msg.text}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Funkcja do dodawania obiektu
+        document.getElementById("add-object-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const name = document.getElementById("object-name").value;
+            const hours = document.getElementById("object-hours").value;
+            const info = document.getElementById("object-info").value;
+            const open = document.getElementById("object-status").value === "true";
+
+            objects.push({ name, hours, info, open });
+            displayObjects();
+            document.getElementById("add-object-form").reset();
+        });
+
+        // Funkcja do dodawania komunikatu
+        document.getElementById("add-message-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const text = document.getElementById("message-text").value;
+            const ts = new Date().toLocaleString();
+            messages.unshift({ ts, text, isNew: true });
+            displayMessages();
+            document.getElementById("add-message-form").reset();
+        });
+
+        // Funkcja do pokazania/ukrycia panelu admina
+        function toggleAdminPanel() {
+            const panel = document.getElementById("admin-panel");
+            if (panel.style.display === "none" || panel.style.display === "") {
+                panel.style.display = "block";
+            } else {
+                panel.style.display = "none";
+            }
+        }
+
+        // Inicjalizacja
+        displayObjects();
+        displayMessages();
+    </script>
+
+</body>
+</html>
