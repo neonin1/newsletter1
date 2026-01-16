@@ -56,10 +56,11 @@
             font-size: 13px;
         }
         #admin-panel {
-            display: none;
+            display: none; /* Panel początkowo ukryty */
             margin-top: 20px;
             padding: 20px;
             background-color: #1c2a48;
+            color: #fff;
         }
         #admin-panel input, #admin-panel textarea, #admin-panel select {
             width: 100%;
@@ -131,6 +132,30 @@
             { ts: "15.01.2026 09:00", text: "Zmienione godziny otwarcia stoku. Sprawdź przed wyjazdem.", isNew: false }
         ];
 
+        let loggedIn = false;
+
+        // Funkcja do logowania
+        function login() {
+            const username = prompt("Podaj nazwę użytkownika:");
+            const password = prompt("Podaj hasło:");
+            if (username === "admin" && password === "admin") {
+                loggedIn = true;
+                toggleAdminPanel();
+                alert("Zalogowano pomyślnie!");
+            } else {
+                alert("Błędne dane logowania!");
+            }
+        }
+
+        function toggleAdminPanel() {
+            if (!loggedIn) {
+                login();
+                return;
+            }
+            const panel = document.getElementById("admin-panel");
+            panel.style.display = panel.style.display === "none" || panel.style.display === "" ? "block" : "none";
+        }
+
         function displayObjects() {
             const container = document.getElementById("objects-container");
             container.innerHTML = ''; // Wyczyść zawartość przed dodaniem nowych obiektów
@@ -158,6 +183,7 @@
             messages.forEach(msg => {
                 const div = document.createElement("div");
                 div.classList.add("msg");
+                div.style.borderColor = msg.isNew ? '#16a34a' : '#dc2626'; // Zielony dla nowych, czerwony dla starych
                 div.classList.add(msg.isNew ? "new" : "old");
                 div.innerHTML = `
                     <div class="ts">${msg.ts}</div>
@@ -189,16 +215,6 @@
             displayMessages();
             document.getElementById("add-message-form").reset();
         });
-
-        // Funkcja do pokazania/ukrycia panelu admina
-        function toggleAdminPanel() {
-            const panel = document.getElementById("admin-panel");
-            if (panel.style.display === "none" || panel.style.display === "") {
-                panel.style.display = "block";
-            } else {
-                panel.style.display = "none";
-            }
-        }
 
         // Inicjalizacja
         displayObjects();
