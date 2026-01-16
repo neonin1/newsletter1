@@ -114,6 +114,14 @@
         .infoPanel a:hover {
             text-decoration: underline;
         }
+        .messageNew {
+            background-color: #16a34a;
+            color: white;
+        }
+        .messageOld {
+            background-color: #dc2626;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -149,6 +157,9 @@
                 <textarea id="message-text" placeholder="Treść komunikatu" required></textarea>
                 <button type="submit">Dodaj Komunikat</button>
             </form>
+
+            <h3>Wyczyść wszystkie komunikaty:</h3>
+            <button onclick="clearMessages()">Wyczyść wszystkie</button>
         </div>
 
         <div class="infoPanel" id="infoPanel" style="display: none;">
@@ -235,8 +246,7 @@
             messages.forEach(msg => {
                 const div = document.createElement("div");
                 div.classList.add("msg");
-                div.style.borderColor = msg.isNew ? '#16a34a' : '#dc2626'; // Zielony dla nowych, czerwony dla starych
-                div.classList.add(msg.isNew ? "new" : "old");
+                div.classList.add(msg.isNew ? "messageNew" : "messageOld");
                 div.innerHTML = `
                     <div class="ts">${msg.ts}</div>
                     <div class="txt">${msg.text}</div>
@@ -256,6 +266,7 @@
             obj.name = newName || obj.name;
             obj.hours = newHours || obj.hours;
             obj.info = newInfo || obj.info;
+            obj.open = !obj.open; // Zmienia status na przeciwny
             displayObjects();
         }
 
@@ -269,8 +280,19 @@
         // Funkcja do edytowania komunikatu
         function editMessage(index) {
             const newText = prompt("Edytuj komunikat", messages[index].text);
+            const ts = new Date().toLocaleString(); // Aktualna data i godzina
             if (newText) {
                 messages[index].text = newText;
+                messages[index].ts = ts;
+                messages[index].isNew = true;
+                displayMessages();
+            }
+        }
+
+        // Funkcja do czyszczenia komunikatów
+        function clearMessages() {
+            if (confirm("Czy na pewno chcesz usunąć wszystkie komunikaty?")) {
+                messages.length = 0;
                 displayMessages();
             }
         }
