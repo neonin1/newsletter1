@@ -102,6 +102,18 @@
         .hideBtn:hover {
             background-color: #FF0000;
         }
+        .infoPanel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .infoPanel a {
+            color: #93c5fd;
+            text-decoration: none;
+        }
+        .infoPanel a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -138,6 +150,11 @@
                 <button type="submit">Dodaj Komunikat</button>
             </form>
         </div>
+
+        <div class="infoPanel" id="infoPanel" style="display: none;">
+            <span>Jesteś zalogowany!</span>
+            <a href="javascript:void(0)" onclick="logout()">Wyloguj się</a>
+        </div>
     </div>
 
     <script>
@@ -161,10 +178,19 @@
             if (username === "admin" && password === "admin") {
                 loggedIn = true;
                 toggleAdminPanel();
-                alert("Zalogowano pomyślnie!");
+                document.getElementById("infoPanel").style.display = "flex";
+                localStorage.setItem('loggedIn', true);
+                window.location.reload();
             } else {
                 alert("Błędne dane logowania!");
             }
+        }
+
+        // Funkcja do wylogowania
+        function logout() {
+            loggedIn = false;
+            localStorage.removeItem('loggedIn');
+            window.location.reload();
         }
 
         function toggleAdminPanel() {
@@ -193,8 +219,10 @@
                         <div class="hours">${obj.hours}</div>
                         <div class="info">${obj.info}</div>
                     </div>
+                    ${loggedIn ? `
                     <button class="editBtn" onclick="editObject(${obj.id})">Edytuj</button>
                     <button class="hideBtn" onclick="toggleVisibility(${obj.id})">${obj.visible ? 'Ukryj' : 'Pokaż'}</button>
+                    ` : ""}
                 `;
                 container.appendChild(div);
             });
@@ -212,7 +240,7 @@
                 div.innerHTML = `
                     <div class="ts">${msg.ts}</div>
                     <div class="txt">${msg.text}</div>
-                    <button class="editBtn" onclick="editMessage(${messages.indexOf(msg)})">Edytuj</button>
+                    ${loggedIn ? `<button class="editBtn" onclick="editMessage(${messages.indexOf(msg)})">Edytuj</button>` : ""}
                 `;
                 container.appendChild(div);
             });
@@ -275,6 +303,10 @@
         });
 
         // Inicjalizacja
+        if (localStorage.getItem('loggedIn')) {
+            loggedIn = true;
+            document.getElementById("infoPanel").style.display = "flex";
+        }
         displayObjects();
         displayMessages();
     </script>
