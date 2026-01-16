@@ -148,42 +148,19 @@
   </div>
 
   <script>
-    const objects = [
+    // Przechowywanie danych w LocalStorage
+    let objects = JSON.parse(localStorage.getItem("objects")) || [
       { id: 1, name: "Kolej gondolowa", open: true, hours: "09:00-16:00 oraz nocne 18:00-21:00", info: "", visible: true },
       { id: 2, name: "Nartostrada", open: true, hours: "09:00-16:00 oraz nocne 18:00-21:00", info: "", visible: true },
       { id: 3, name: "Orczyk", open: true, hours: "09:00-16:00 oraz 18:00-21:00", info: "", visible: true }
     ];
-
-    const messages = [
+    
+    let messages = JSON.parse(localStorage.getItem("messages")) || [
       { ts: "16.01.2026 12:00", text: "Pogoda sprzyja! Zapraszamy na stoki.", isNew: true },
       { ts: "15.01.2026 09:00", text: "Zmienione godziny otwarcia stoku. Sprawdź przed wyjazdem.", isNew: false }
     ];
 
-    let loggedIn = false;
-
-    // Funkcja logowania
-    function login() {
-      const username = prompt("Podaj nazwę użytkownika:");
-      const password = prompt("Podaj hasło:");
-      if (username === "admin" && password === "admin") {
-        loggedIn = true;
-        toggleAdminPanel();
-        localStorage.setItem('loggedIn', true);
-        window.location.reload();
-      } else {
-        alert("Błędne dane logowania!");
-      }
-    }
-
-    function toggleAdminPanel() {
-      if (!loggedIn) {
-        login();
-        return;
-      }
-      const panel = document.getElementById("admin-panel");
-      panel.style.display = panel.style.display === "none" || panel.style.display === "" ? "block" : "none";
-    }
-
+    // Funkcja wyświetlająca obiekty
     function displayObjects() {
       const container = document.getElementById("objects-container");
       container.innerHTML = ''; // Wyczyść zawartość przed dodaniem nowych obiektów
@@ -209,6 +186,7 @@
       });
     }
 
+    // Funkcja wyświetlająca komunikaty
     function displayMessages() {
       const container = document.getElementById("messages-container");
       container.innerHTML = ''; // Wyczyść zawartość przed dodaniem nowych wiadomości
@@ -226,6 +204,7 @@
       });
     }
 
+    // Funkcja edytująca obiekt
     function editObject(id) {
       const obj = objects.find(o => o.id === id);
       const newName = prompt("Edytuj nazwę obiektu", obj.name);
@@ -236,32 +215,40 @@
       obj.hours = newHours || obj.hours;
       obj.info = newInfo || obj.info;
       obj.open = !obj.open; // Zmiana statusu
+      localStorage.setItem("objects", JSON.stringify(objects));
       displayObjects();
     }
 
+    // Funkcja zmieniająca widoczność obiektu
     function toggleVisibility(id) {
       const obj = objects.find(o => o.id === id);
       obj.visible = !obj.visible;
+      localStorage.setItem("objects", JSON.stringify(objects));
       displayObjects();
     }
 
+    // Funkcja edytująca komunikat
     function editMessage(index) {
       const newText = prompt("Edytuj komunikat", messages[index].text);
       if (newText) {
         messages[index].text = newText;
         messages[index].ts = new Date().toLocaleString(); // Aktualna data i godzina
         messages[index].isNew = true;
+        localStorage.setItem("messages", JSON.stringify(messages));
         displayMessages();
       }
     }
 
+    // Funkcja czyszcząca komunikaty
     function clearMessages() {
       if (confirm("Czy na pewno chcesz usunąć wszystkie komunikaty?")) {
         messages.length = 0;
+        localStorage.setItem("messages", JSON.stringify(messages));
         displayMessages();
       }
     }
 
+    // Funkcja dodająca obiekt
     document.getElementById("add-object-form").addEventListener("submit", function(event) {
       event.preventDefault();
       const name = document.getElementById("object-name").value;
@@ -274,23 +261,23 @@
         name, hours, info, open, visible: true
       };
       objects.push(newObject);
+      localStorage.setItem("objects", JSON.stringify(objects));
       displayObjects();
       document.getElementById("add-object-form").reset();
     });
 
+    // Funkcja dodająca komunikat
     document.getElementById("add-message-form").addEventListener("submit", function(event) {
       event.preventDefault();
       const text = document.getElementById("message-text").value;
       const ts = new Date().toLocaleString();
       messages.unshift({ ts, text, isNew: true });
+      localStorage.setItem("messages", JSON.stringify(messages));
       displayMessages();
       document.getElementById("add-message-form").reset();
     });
 
-    if (localStorage.getItem('loggedIn')) {
-      loggedIn = true;
-    }
-
+    // Wczytanie początkowych danych
     displayObjects();
     displayMessages();
   </script>
