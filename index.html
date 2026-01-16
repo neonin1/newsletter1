@@ -1,286 +1,240 @@
 <!DOCTYPE html>
 <html lang="pl">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>SKI&Sun - Aktualności</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #0b1220;
-      color: #e5e7eb;
-      margin: 0;
-      padding: 24px;
-    }
-    .card {
-      max-width: 900px;
-      margin: 0 auto;
-      background: #0f1b33;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 18px 18px 8px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-    }
-    .line {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      padding: 10px 10px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.03);
-      margin: 10px 0;
-    }
-    .dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 999px;
-      margin-top: 4px;
-    }
-    .msg {
-      border-radius: 12px;
-      padding: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(0, 0, 0, 0.15);
-      margin: 10px 0;
-    }
-    .adminBtn {
-      display: inline-flex;
-      align-items: center;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.10);
-      color: #93c5fd;
-      text-decoration: none;
-      font-size: 13px;
-    }
-    .adminBtn:hover {
-      background: rgba(255, 255, 255, 0.10);
-    }
-    .sep {
-      height: 1px;
-      background: rgba(255, 255, 255, 0.08);
-      margin: 14px 0;
-    }
-    .sub {
-      font-size: 14px;
-      opacity: 0.8;
-      margin: 0 0 10px;
-    }
-    .hidden {
-      opacity: 0.5;
-    }
-    .note {
-      font-size: 12px;
-      opacity: 0.75;
-      margin-top: 10px;
-    }
-    .editBtn {
-      background-color: #FFD700;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .editBtn:hover {
-      background-color: #FFCC00;
-    }
-    .hideBtn {
-      background-color: #DC2626;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .hideBtn:hover {
-      background-color: #FF0000;
-    }
-    .showBtn {
-      background-color: #16a34a;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .showBtn:hover {
-      background-color: #00FF00;
-    }
-  </style>
-</head>
-<body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SKI&SUN - Aktualne informacje</title>
+    <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet">
+    <style>
+      body {
+        background-color: #0b1220;
+        color: #e5e7eb;
+      }
+      .status-box {
+        border: 1px solid rgba(255,255,255,.1);
+        background-color: #0f1b33;
+        padding: 1rem;
+        border-radius: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      }
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+      }
+      .hidden {
+        opacity: 0.4;
+      }
+      .msg-new {
+        border: 1px solid rgba(22, 163, 74, 0.55);
+        background: rgba(22, 163, 74, 0.10);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-top: 1rem;
+      }
+      .msg-old {
+        border: 1px solid rgba(220, 38, 38, 0.55);
+        background: rgba(220, 38, 38, 0.08);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-top: 1rem;
+      }
+      .info-section {
+        margin-top: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="container-fluid">
+      <ul>
+        <li><strong>SKI&amp;SUN</strong></li>
+      </ul>
+      <ul>
+        <li><a href="#" onclick="showPublicView()">Publiczna</a></li>
+        <li><a href="#" onclick="showAdminLogin()">Admin</a></li>
+      </ul>
+    </nav>
 
-  <div class="card">
-    <div class="top">
-      <h1 class="title">SKI&Sun - Aktualne informacje:</h1>
-      <a class="adminBtn" href="javascript:void(0)" onclick="toggleAdminPanel()">Panel Admin</a>
-    </div>
+    <main class="container" id="app">
+      <!-- Content dynamicznie renderowany przez JS -->
+    </main>
 
-    <div class="sep"></div>
+    <footer class="container">
+      <small><a href="#">SKI&amp;SUN</a> • <a href="#">Polska</a></small>
+    </footer>
 
-    <div id="objects-container"></div>
+    <script>
+      const defaultObjects = [
+        { name: "Kolej gondolowa", open: true, hours: "09:00-16:00 oraz nocne 18:00-21:00", info: "", visible: true },
+        { name: "Nartostrada", open: true, hours: "09:00-16:00 oraz nocne 18:00-21:00", info: "", visible: true },
+        { name: "Orczyk", open: true, hours: "09:00-16:00 oraz 18:00-21:00", info: "", visible: true },
+        { name: "Taśma do nauki jazdy", open: true, hours: "09:00-16:00", info: "", visible: true },
+        { name: "Tor saneczkowy", open: true, hours: "10:00-16:00", info: "", visible: true },
+        { name: "Narciarstwo biegowe", open: false, hours: "Trasa zamknięta w tym roku", info: "", visible: true }
+      ];
 
-    <div class="sep"></div>
-    <p class="sub">Aktualne komunikaty:</p>
-    <div id="messages-container"></div>
-  </div>
+      const app = document.getElementById("app");
 
-  <!-- Admin Panel (hidden initially) -->
-  <div id="admin-panel" style="display: none;">
-    <div class="card">
-      <h3>Dodaj obiekt</h3>
-      <form id="add-object-form">
-        <input type="text" id="object-name" placeholder="Nazwa obiektu" required>
-        <input type="text" id="object-hours" placeholder="Godziny otwarcia" required>
-        <textarea id="object-info" placeholder="Informacje dodatkowe"></textarea>
-        <select id="object-status">
-          <option value="true">OTWARTE</option>
-          <option value="false">ZAMKNIĘTE</option>
-        </select>
-        <button type="submit">Dodaj Obiekt</button>
-      </form>
-      <h3>Dodaj komunikat</h3>
-      <form id="add-message-form">
-        <textarea id="message-text" placeholder="Treść komunikatu" required></textarea>
-        <button type="submit">Dodaj Komunikat</button>
-      </form>
-    </div>
-  </div>
+      function getData() {
+        const data = localStorage.getItem("skiData");
+        if (data) return JSON.parse(data);
+        return { objects: defaultObjects, messages: [] };
+      }
 
-  <script>
-    // Przechowywanie danych w LocalStorage
-    let objects = JSON.parse(localStorage.getItem("objects")) || [
-      { id: 1, name: "Kolej gondolowa", open: true, hours: "09:00-16:00 oraz nocne 18:00-21:00", info: "", visible: true },
-      { id: 2, name: "Nartostrada", open: true, hours: "09:00-16:00 oraz nocne 18:00-21:00", info: "", visible: true },
-      { id: 3, name: "Orczyk", open: true, hours: "09:00-16:00 oraz 18:00-21:00", info: "", visible: true }
-    ];
-    
-    let messages = JSON.parse(localStorage.getItem("messages")) || [
-      { ts: "16.01.2026 12:00", text: "Pogoda sprzyja! Zapraszamy na stoki.", isNew: true },
-      { ts: "15.01.2026 09:00", text: "Zmienione godziny otwarcia stoku. Sprawdź przed wyjazdem.", isNew: false }
-    ];
+      function saveData(data) {
+        localStorage.setItem("skiData", JSON.stringify(data));
+      }
 
-    // Funkcja wyświetlająca obiekty
-    function displayObjects() {
-      const container = document.getElementById("objects-container");
-      container.innerHTML = ''; // Wyczyść zawartość przed dodaniem nowych obiektów
-
-      objects.forEach(obj => {
-        const div = document.createElement("div");
-        div.classList.add("line");
-        const status = obj.open ? "czynna" : "zamknięta";
-        const visibility = obj.visible ? "" : " - UKRYTY";
-        div.innerHTML = `
-          <div class="dot" style="background:${obj.open ? '#16a34a' : '#dc2626'};"></div>
-          <div class="txt">
-            <div class="name">${obj.name} <span class="st">(${status})${visibility}</span></div>
-            <div class="hours">${obj.hours}</div>
-            <div class="info">${obj.info}</div>
+      function showPublicView() {
+        const data = getData();
+        app.innerHTML = `
+          <h2>Status obiektów</h2>
+          <div>
+            ${data.objects
+              .filter((o) => o.visible)
+              .map(
+                (o) => `
+              <div class="status-box">
+                <div><span class="dot" style="background:${o.open ? '#16a34a' : '#dc2626'}"></span>
+                <strong>${o.name}</strong> <small>(${o.open ? "czynna" : "zamknięta"})</small></div>
+                <div>${o.hours}</div>
+                ${o.info ? `<div style="opacity: 0.8; font-size: 0.9em;">${o.info}</div>` : ""}
+              </div>
+            `
+              )
+              .join("") || "<p>Brak widocznych obiektów.</p>"}
           </div>
-          ${loggedIn ? `
-            <button class="editBtn" onclick="editObject(${obj.id})">Edytuj</button>
-            <button class="hideBtn" onclick="toggleVisibility(${obj.id})">${obj.visible ? 'Ukryj' : 'Pokaż'}</button>
-          ` : ""}
+
+          <div class="info-section">
+            <h3>Komunikaty / aktualności</h3>
+            <p>(nowe na zielono, starsze na czerwono)</p>
+            ${data.messages.length === 0 ? "Brak komunikatów." : data.messages
+              .map(
+                (m, i) => `
+              <div class="${i === 0 ? 'msg-new' : 'msg-old'}">
+                <strong>${m.ts}</strong><br>
+                ${m.text}
+              </div>
+            `
+              )
+              .join("")}
+          </div>
         `;
-        container.appendChild(div);
-      });
-    }
+      }
 
-    // Funkcja wyświetlająca komunikaty
-    function displayMessages() {
-      const container = document.getElementById("messages-container");
-      container.innerHTML = ''; // Wyczyść zawartość przed dodaniem nowych wiadomości
-
-      messages.forEach(msg => {
-        const div = document.createElement("div");
-        div.classList.add("msg");
-        div.classList.add(msg.isNew ? "messageNew" : "messageOld");
-        div.innerHTML = `
-          <div class="ts">${msg.ts}</div>
-          <div class="txt">${msg.text}</div>
-          ${loggedIn ? `<button class="editBtn" onclick="editMessage(${messages.indexOf(msg)})">Edytuj</button>` : ""}
+      function showAdminLogin() {
+        app.innerHTML = `
+          <h2>Logowanie admina</h2>
+          <form onsubmit="event.preventDefault(); loginAdmin(this)">
+            <input type="text" name="login" placeholder="Login" required>
+            <input type="password" name="password" placeholder="Hasło" required>
+            <button type="submit">Zaloguj</button>
+          </form>
         `;
-        container.appendChild(div);
-      });
-    }
-
-    // Funkcja edytująca obiekt
-    function editObject(id) {
-      const obj = objects.find(o => o.id === id);
-      const newName = prompt("Edytuj nazwę obiektu", obj.name);
-      const newHours = prompt("Edytuj godziny", obj.hours);
-      const newInfo = prompt("Edytuj informacje", obj.info);
-
-      obj.name = newName || obj.name;
-      obj.hours = newHours || obj.hours;
-      obj.info = newInfo || obj.info;
-      obj.open = !obj.open; // Zmiana statusu
-      localStorage.setItem("objects", JSON.stringify(objects));
-      displayObjects();
-    }
-
-    // Funkcja zmieniająca widoczność obiektu
-    function toggleVisibility(id) {
-      const obj = objects.find(o => o.id === id);
-      obj.visible = !obj.visible;
-      localStorage.setItem("objects", JSON.stringify(objects));
-      displayObjects();
-    }
-
-    // Funkcja edytująca komunikat
-    function editMessage(index) {
-      const newText = prompt("Edytuj komunikat", messages[index].text);
-      if (newText) {
-        messages[index].text = newText;
-        messages[index].ts = new Date().toLocaleString(); // Aktualna data i godzina
-        messages[index].isNew = true;
-        localStorage.setItem("messages", JSON.stringify(messages));
-        displayMessages();
       }
-    }
 
-    // Funkcja czyszcząca komunikaty
-    function clearMessages() {
-      if (confirm("Czy na pewno chcesz usunąć wszystkie komunikaty?")) {
-        messages.length = 0;
-        localStorage.setItem("messages", JSON.stringify(messages));
-        displayMessages();
+      function loginAdmin(form) {
+        const login = form.login.value;
+        const pass = form.password.value;
+        if (login === "admin" && pass === "admin") {
+          localStorage.setItem("loggedIn", "1");
+          showAdminPanel();
+        } else {
+          alert("Błędny login lub hasło");
+        }
       }
-    }
 
-    // Funkcja dodająca obiekt
-    document.getElementById("add-object-form").addEventListener("submit", function(event) {
-      event.preventDefault();
-      const name = document.getElementById("object-name").value;
-      const hours = document.getElementById("object-hours").value;
-      const info = document.getElementById("object-info").value;
-      const open = document.getElementById("object-status").value === "true";
+      function showAdminPanel() {
+        if (!localStorage.getItem("loggedIn")) return showAdminLogin();
+        const data = getData();
 
-      const newObject = {
-        id: objects.length + 1,
-        name, hours, info, open, visible: true
-      };
-      objects.push(newObject);
-      localStorage.setItem("objects", JSON.stringify(objects));
-      displayObjects();
-      document.getElementById("add-object-form").reset();
-    });
+        app.innerHTML = `
+          <h2>Panel admina</h2>
+          <button onclick="logoutAdmin()">Wyloguj</button>
 
-    // Funkcja dodająca komunikat
-    document.getElementById("add-message-form").addEventListener("submit", function(event) {
-      event.preventDefault();
-      const text = document.getElementById("message-text").value;
-      const ts = new Date().toLocaleString();
-      messages.unshift({ ts, text, isNew: true });
-      localStorage.setItem("messages", JSON.stringify(messages));
-      displayMessages();
-      document.getElementById("add-message-form").reset();
-    });
+          <h3>Obiekty</h3>
+          ${data.objects
+            .map(
+              (o, i) => `
+            <details class="${!o.visible ? 'hidden' : ''}">
+              <summary>${o.name} (${o.open ? "czynna" : "zamknięta"})</summary>
+              <label>Nazwa <input value="${o.name}" onchange="updateObj(${i}, 'name', this.value)"></label>
+              <label>Godziny <input value="${o.hours}" onchange="updateObj(${i}, 'hours', this.value)"></label>
+              <label>Info <input value="${o.info}" onchange="updateObj(${i}, 'info', this.value)"></label>
+              <label>Status
+                <select onchange="updateObj(${i}, 'open', this.value === 'true')">
+                  <option value="true" ${o.open ? "selected" : ""}>OTWARTE</option>
+                  <option value="false" ${!o.open ? "selected" : ""}>ZAMKNIĘTE</option>
+                </select>
+              </label>
+              <label>Widoczny
+                <input type="checkbox" ${o.visible ? "checked" : ""} onchange="updateObj(${i}, 'visible', this.checked)">
+              </label>
+            </details>
+          `
+            )
+            .join("")}
 
-    // Wczytanie początkowych danych
-    displayObjects();
-    displayMessages();
-  </script>
+          <button onclick="addObject()">+ Dodaj nowy obiekt</button>
 
-</body>
+          <h3>Komunikaty</h3>
+          <form onsubmit="event.preventDefault(); addMessage(this)">
+            <input name="text" placeholder="Nowy komunikat" required>
+            <button type="submit">Dodaj</button>
+          </form>
+          <button onclick="clearMessages()">Wyczyść wszystkie</button>
+        `;
+      }
+
+      function logoutAdmin() {
+        localStorage.removeItem("loggedIn");
+        showPublicView();
+      }
+
+      function updateObj(index, key, value) {
+        const data = getData();
+        data.objects[index][key] = value;
+        saveData(data);
+      }
+
+      function addObject() {
+        const data = getData();
+        data.objects.push({
+          name: "Nowy obiekt",
+          open: true,
+          hours: "09:00-16:00",
+          info: "",
+          visible: true
+        });
+        saveData(data);
+        showAdminPanel();
+      }
+
+      function addMessage(form) {
+        const text = form.text.value;
+        if (!text.trim()) return;
+        const now = new Date();
+        const ts = now.toLocaleString("pl-PL");
+        const data = getData();
+        data.messages.unshift({ ts, text });
+        saveData(data);
+        form.reset();
+        showAdminPanel();
+      }
+
+      function clearMessages() {
+        if (!confirm("Na pewno usunąć wszystkie komunikaty?")) return;
+        const data = getData();
+        data.messages = [];
+        saveData(data);
+        showAdminPanel();
+      }
+
+      // Domyślnie pokazujemy widok publiczny
+      showPublicView();
+    </script>
+  </body>
 </html>
