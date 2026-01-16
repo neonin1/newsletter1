@@ -1,240 +1,257 @@
 <!DOCTYPE html>
 <html lang="pl">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SKI&SUN - Aktualne informacje</title>
-    <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet">
-    <style>
-      body {
-        background-color: #0b1220;
-        color: #e5e7eb;
-      }
-      .status-box {
-        border: 1px solid rgba(255,255,255,.1);
-        background-color: #0f1b33;
-        padding: 1rem;
-        border-radius: 1rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      }
-      .dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: 8px;
-      }
-      .hidden {
-        opacity: 0.4;
-      }
-      .msg-new {
-        border: 1px solid rgba(22, 163, 74, 0.55);
-        background: rgba(22, 163, 74, 0.10);
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin-top: 1rem;
-      }
-      .msg-old {
-        border: 1px solid rgba(220, 38, 38, 0.55);
-        background: rgba(220, 38, 38, 0.08);
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin-top: 1rem;
-      }
-      .info-section {
-        margin-top: 2rem;
-      }
-    </style>
-  </head>
-  <body>
-    <nav class="container-fluid">
-      <ul>
-        <li><strong>SKI&amp;SUN</strong></li>
-      </ul>
-      <ul>
-        <li><a href="#" onclick="showPublicView()">Publiczna</a></li>
-        <li><a href="#" onclick="showAdminLogin()">Admin</a></li>
-      </ul>
-    </nav>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SKI&SUN - Aktualne informacje</title>
+  <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #0b1220;
+      color: #e5e7eb;
+    }
+    .status-box {
+      border: 1px solid rgba(255,255,255,.1);
+      background-color: #0f1b33;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
+    }
+    .hidden {
+      opacity: 0.4;
+    }
+    .msg-new {
+      border: 1px solid rgba(22, 163, 74, 0.55);
+      background: rgba(22, 163, 74, 0.10);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-top: 1rem;
+    }
+    .msg-old {
+      border: 1px solid rgba(220, 38, 38, 0.55);
+      background: rgba(220, 38, 38, 0.08);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-top: 1rem;
+    }
+    .info-section {
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="container-fluid">
+    <ul>
+      <li><strong>SKI&amp;SUN</strong></li>
+    </ul>
+    <ul>
+      <li><a href="#" onclick="showPublicView()">Publiczna</a></li>
+      <li><a href="#" onclick="showAdminPanel()">Admin</a></li>
+    </ul>
+  </nav>
 
-    <main class="container" id="app">
-      <!-- Content dynamicznie renderowany przez JS -->
-    </main>
+  <main class="container" id="app"></main>
 
-    <footer class="container">
-      <small><a href="#">SKI&amp;SUN</a> • <a href="#">Polska</a></small>
-    </footer>
+  <footer class="container">
+    <small><a href="#">SKI&amp;SUN</a> • <a href="#">Polska</a></small>
+  </footer>
 
-    <script>
-      const defaultObjects = [
-        { name: "Kolej gondolowa", open: true, hours: "09:00-16:00 oraz nocne 18:00-21:00", info: "", visible: true },
-        { name: "Nartostrada", open: true, hours: "09:00-16:00 oraz nocne 18:00-21:00", info: "", visible: true },
-        { name: "Orczyk", open: true, hours: "09:00-16:00 oraz 18:00-21:00", info: "", visible: true },
-        { name: "Taśma do nauki jazdy", open: true, hours: "09:00-16:00", info: "", visible: true },
-        { name: "Tor saneczkowy", open: true, hours: "10:00-16:00", info: "", visible: true },
-        { name: "Narciarstwo biegowe", open: false, hours: "Trasa zamknięta w tym roku", info: "", visible: true }
-      ];
+  <script>
+    const defaultObjects = [
+      { name: "Kolej gondolowa", open: true, hours: "09:00-16:00 oraz nocne 18:00-21:00", info: "", visible: true },
+      { name: "Nartostrada", open: true, hours: "09:00-16:00 oraz nocne 18:00-21:00", info: "", visible: true },
+      { name: "Orczyk", open: true, hours: "09:00-16:00 oraz 18:00-21:00", info: "", visible: true },
+      { name: "Taśma do nauki jazdy", open: true, hours: "09:00-16:00", info: "", visible: true },
+      { name: "Tor saneczkowy", open: true, hours: "10:00-16:00", info: "", visible: true },
+      { name: "Narciarstwo biegowe", open: false, hours: "Trasa zamknięta w tym roku", info: "", visible: true }
+    ];
 
-      const app = document.getElementById("app");
+    const app = document.getElementById("app");
 
-      function getData() {
-        const data = localStorage.getItem("skiData");
-        if (data) return JSON.parse(data);
-        return { objects: defaultObjects, messages: [] };
-      }
+    function getData() {
+      const data = localStorage.getItem("skiData");
+      if (data) return JSON.parse(data);
+      return { objects: defaultObjects, messages: [] };
+    }
 
-      function saveData(data) {
-        localStorage.setItem("skiData", JSON.stringify(data));
-      }
+    function saveData(data) {
+      localStorage.setItem("skiData", JSON.stringify(data));
+    }
 
-      function showPublicView() {
-        const data = getData();
-        app.innerHTML = `
-          <h2>Status obiektów</h2>
-          <div>
-            ${data.objects
-              .filter((o) => o.visible)
-              .map(
-                (o) => `
+    function showPublicView() {
+      const data = getData();
+      app.innerHTML = `
+        <h2>Status obiektów</h2>
+        <div>
+          ${data.objects
+            .filter((o) => o.visible)
+            .map((o) => `
               <div class="status-box">
                 <div><span class="dot" style="background:${o.open ? '#16a34a' : '#dc2626'}"></span>
                 <strong>${o.name}</strong> <small>(${o.open ? "czynna" : "zamknięta"})</small></div>
-                <div>${o.hours}</div>
-                ${o.info ? `<div style="opacity: 0.8; font-size: 0.9em;">${o.info}</div>` : ""}
+                ${o.open && o.hours ? `<div>${o.hours}</div>` : ''}
+                ${o.info ? `<div style=\"opacity: 0.8; font-size: 0.9em;\">${o.info}</div>` : ""}
               </div>
-            `
-              )
-              .join("") || "<p>Brak widocznych obiektów.</p>"}
-          </div>
+            `).join('') || "<p>Brak widocznych obiektów.</p>"}
+        </div>
 
-          <div class="info-section">
-            <h3>Komunikaty / aktualności</h3>
-            <p>(nowe na zielono, starsze na czerwono)</p>
-            ${data.messages.length === 0 ? "Brak komunikatów." : data.messages
-              .map(
-                (m, i) => `
+        <div class="info-section">
+          <h3>Komunikaty / aktualności</h3>
+          <p>(nowe na zielono, starsze na czerwono)</p>
+          ${data.messages.length === 0 ? "Brak komunikatów." : data.messages
+            .map((m, i) => `
               <div class="${i === 0 ? 'msg-new' : 'msg-old'}">
                 <strong>${m.ts}</strong><br>
                 ${m.text}
               </div>
-            `
-              )
-              .join("")}
+            `).join('')}
+        </div>
+      `;
+    }
+
+    function showAdminLogin() {
+      app.innerHTML = `
+        <h2>Logowanie admina</h2>
+        <form onsubmit="event.preventDefault(); loginAdmin(this)">
+          <input type="text" name="login" placeholder="Login" required>
+          <input type="password" name="password" placeholder="Hasło" required>
+          <button type="submit">Zaloguj</button>
+        </form>
+      `;
+    }
+
+    function loginAdmin(form) {
+      const login = form.login.value;
+      const pass = form.password.value;
+      if (login === "admin" && pass === "admin") {
+        localStorage.setItem("loggedIn", "1");
+        showAdminPanel();
+      } else {
+        alert("Błędny login lub hasło");
+      }
+    }
+
+    function showAdminPanel() {
+      if (!localStorage.getItem("loggedIn")) return showAdminLogin();
+      const data = getData();
+
+      app.innerHTML = `
+        <h2>Panel admina</h2>
+        <button onclick="logoutAdmin()">Wyloguj</button>
+
+        <h3>Obiekty</h3>
+        ${data.objects.map((o, i) => `
+          <details class="${!o.visible ? 'hidden' : ''}">
+            <summary>${o.name} (${o.open ? "czynna" : "zamknięta"})</summary>
+            <label>Nazwa <input value="${o.name}" onchange="updateObj(${i}, 'name', this.value)"></label>
+            <label>Info <input value="${o.info}" onchange="updateObj(${i}, 'info', this.value)"></label>
+            <label>Status
+              <select onchange="updateObj(${i}, 'open', this.value === 'true')">
+                <option value="true" ${o.open ? "selected" : ""}>OTWARTE</option>
+                <option value="false" ${!o.open ? "selected" : ""}>ZAMKNIĘTE</option>
+              </select>
+            </label>
+            <label>Widoczny
+              <input type="checkbox" ${o.visible ? "checked" : ""} onchange="updateObj(${i}, 'visible', this.checked)">
+            </label>
+            ${o.open ? `<label>Godziny <input value="${o.hours}" onchange="updateObj(${i}, 'hours', this.value)"></label>` : ''}
+          </details>
+        `).join('')}
+
+        <button onclick="addObject()">+ Dodaj nowy obiekt</button>
+
+        <h3>Dodaj komunikat</h3>
+        <form onsubmit="event.preventDefault(); addMessage(this)">
+          <input name="text" placeholder="Nowy komunikat" required>
+          <button type="submit">Dodaj</button>
+        </form>
+
+        ${data.messages.length ? `
+          <h4>Ostatni komunikat – edytuj</h4>
+          <form onsubmit="event.preventDefault(); editLastMessage(this)">
+            <textarea name="text" required>${data.messages[0].text}</textarea>
+            <button type="submit">Zapisz poprawkę</button>
+          </form>
+        ` : '<p>Brak komunikatów do edycji.</p>'}
+
+        <button onclick="clearMessages()">Wyczyść wszystkie komunikaty</button>
+
+        <h3>Wszystkie komunikaty</h3>
+        ${data.messages.length === 0 ? '<p>Brak komunikatów.</p>' : data.messages.map((m, i) => `
+          <div class="${i === 0 ? 'msg-new' : 'msg-old'}">
+            <strong>${m.ts}</strong><br>
+            ${m.text}
           </div>
-        `;
-      }
+        `).join('')}
+      `;
+    }
 
-      function showAdminLogin() {
-        app.innerHTML = `
-          <h2>Logowanie admina</h2>
-          <form onsubmit="event.preventDefault(); loginAdmin(this)">
-            <input type="text" name="login" placeholder="Login" required>
-            <input type="password" name="password" placeholder="Hasło" required>
-            <button type="submit">Zaloguj</button>
-          </form>
-        `;
-      }
-
-      function loginAdmin(form) {
-        const login = form.login.value;
-        const pass = form.password.value;
-        if (login === "admin" && pass === "admin") {
-          localStorage.setItem("loggedIn", "1");
-          showAdminPanel();
-        } else {
-          alert("Błędny login lub hasło");
-        }
-      }
-
-      function showAdminPanel() {
-        if (!localStorage.getItem("loggedIn")) return showAdminLogin();
-        const data = getData();
-
-        app.innerHTML = `
-          <h2>Panel admina</h2>
-          <button onclick="logoutAdmin()">Wyloguj</button>
-
-          <h3>Obiekty</h3>
-          ${data.objects
-            .map(
-              (o, i) => `
-            <details class="${!o.visible ? 'hidden' : ''}">
-              <summary>${o.name} (${o.open ? "czynna" : "zamknięta"})</summary>
-              <label>Nazwa <input value="${o.name}" onchange="updateObj(${i}, 'name', this.value)"></label>
-              <label>Godziny <input value="${o.hours}" onchange="updateObj(${i}, 'hours', this.value)"></label>
-              <label>Info <input value="${o.info}" onchange="updateObj(${i}, 'info', this.value)"></label>
-              <label>Status
-                <select onchange="updateObj(${i}, 'open', this.value === 'true')">
-                  <option value="true" ${o.open ? "selected" : ""}>OTWARTE</option>
-                  <option value="false" ${!o.open ? "selected" : ""}>ZAMKNIĘTE</option>
-                </select>
-              </label>
-              <label>Widoczny
-                <input type="checkbox" ${o.visible ? "checked" : ""} onchange="updateObj(${i}, 'visible', this.checked)">
-              </label>
-            </details>
-          `
-            )
-            .join("")}
-
-          <button onclick="addObject()">+ Dodaj nowy obiekt</button>
-
-          <h3>Komunikaty</h3>
-          <form onsubmit="event.preventDefault(); addMessage(this)">
-            <input name="text" placeholder="Nowy komunikat" required>
-            <button type="submit">Dodaj</button>
-          </form>
-          <button onclick="clearMessages()">Wyczyść wszystkie</button>
-        `;
-      }
-
-      function logoutAdmin() {
-        localStorage.removeItem("loggedIn");
-        showPublicView();
-      }
-
-      function updateObj(index, key, value) {
-        const data = getData();
-        data.objects[index][key] = value;
-        saveData(data);
-      }
-
-      function addObject() {
-        const data = getData();
-        data.objects.push({
-          name: "Nowy obiekt",
-          open: true,
-          hours: "09:00-16:00",
-          info: "",
-          visible: true
-        });
-        saveData(data);
-        showAdminPanel();
-      }
-
-      function addMessage(form) {
-        const text = form.text.value;
-        if (!text.trim()) return;
-        const now = new Date();
-        const ts = now.toLocaleString("pl-PL");
-        const data = getData();
-        data.messages.unshift({ ts, text });
-        saveData(data);
-        form.reset();
-        showAdminPanel();
-      }
-
-      function clearMessages() {
-        if (!confirm("Na pewno usunąć wszystkie komunikaty?")) return;
-        const data = getData();
-        data.messages = [];
-        saveData(data);
-        showAdminPanel();
-      }
-
-      // Domyślnie pokazujemy widok publiczny
+    function logoutAdmin() {
+      localStorage.removeItem("loggedIn");
       showPublicView();
-    </script>
-  </body>
+    }
+
+    function updateObj(index, key, value) {
+      const data = getData();
+      data.objects[index][key] = value;
+      saveData(data);
+    }
+
+    function addObject() {
+      const data = getData();
+      data.objects.push({
+        name: "Nowy obiekt",
+        open: true,
+        hours: "09:00-16:00",
+        info: "",
+        visible: true
+      });
+      saveData(data);
+      showAdminPanel();
+    }
+
+    function addMessage(form) {
+      const text = form.text.value;
+      if (!text.trim()) return;
+      const now = new Date();
+      const ts = now.toLocaleString("pl-PL");
+      const data = getData();
+      data.messages.unshift({ ts, text });
+      saveData(data);
+      form.reset();
+      showAdminPanel();
+    }
+
+    function editLastMessage(form) {
+      const data = getData();
+      if (!data.messages.length) return;
+      const text = form.text.value;
+      data.messages[0].text = text;
+      saveData(data);
+      showAdminPanel();
+    }
+
+    function clearMessages() {
+      if (!confirm("Na pewno usunąć wszystkie komunikaty?")) return;
+      const data = getData();
+      data.messages = [];
+      saveData(data);
+      showAdminPanel();
+    }
+
+    if (localStorage.getItem("loggedIn")) {
+      showAdminPanel();
+    } else {
+      showPublicView();
+    }
+  </script>
+</body>
 </html>
